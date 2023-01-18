@@ -1,0 +1,30 @@
+#!/bin/bash
+
+CURRENTDATE=`date +"%d-%m-%Y"`
+
+echo $FIRSTARGUMENT
+
+if [ ${1} == -help ];
+then
+	echo " backup [command] outputdirectory/filename inputfile/inputdirectory"
+	echo ""
+	echo " -df		Default input File/Folder"
+	echo " -sdf		Set default input File/Folder"
+	echo " -dt		Default output"
+	echo " -sdt		Set default output"
+	echo ""
+	echo " Commands"
+	echo " -d		Add current date to filename"
+	echo " -help		For help"
+	echo ""
+
+	line=$(head -n 1 temp.txt)
+	
+	echo $line
+	
+	exit 0
+fi
+
+tar -czf /run/media/mads/Backup/backup${CURRENTDATE}.tar.gz /home/${USER}/Dokumente
+
+exit 0
