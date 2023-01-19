@@ -2,20 +2,30 @@
 
 CURRENTDATE=`date +"%d-%m-%Y"`
 
-echo $FIRSTARGUMENT
+archive_f () {
+  tar -czf ${1} ${2}
+  return
+}
+test_for_file () {
+	if [[ -f $2 ]]; then echo "file/directory found" ; 
+	else 
+		echo "Couldnt find file/directory"
+		exit 1
+	fi
+}
 
 if [ ${1} == -help ];
 then
 	echo " backup [command] outputdirectory/filename inputfile/inputdirectory"
 	echo ""
-	echo " -df		Default input File/Folder"
-	echo " -sdf		Set default input File/Folder"
-	echo " -dt		Default output"
-	echo " -sdt		Set default output"
+	echo " -din 									Default input File/Folder"
+	echo " -sdin [inputfile/inputdirectory]			Set default input File/Folder"
+	echo " -dout									Default output"
+	echo " -sdout [outputdirectory/filename]		Set default output"
 	echo ""
 	echo " Commands"
-	echo " -d		Add current date to filename"
-	echo " -help		For help"
+	echo " -d [output] [input]					Add current date to filename"
+	echo " -help								For help"
 	echo ""
 
 	line=$(head -n 1 temp.txt)
@@ -25,6 +35,25 @@ then
 	exit 0
 fi
 
-tar -czf /run/media/mads/Backup/backup${CURRENTDATE}.tar.gz /home/${USER}/Dokumente
+if [ ${1} == -dout ] || [ ${1} == -din ]; 
+then 
+	test_for_file
+	truncate -s 0 ${1}
+	echo "$2" > ${1}
+	echo Succesfully
+	exit 0
+fi
+
+if [ ${1} == -d ];
+then
+	if [ ${2} == -di ]; then in=$(head -n 1 din); else in=${3}; fi
+	if [ ${2} == -do ]; then out=$(head -n 1 dout); else out=${2}${CURRENTDATE}; fi
+	archive_f ${out} ${in}
+	exit 0
+fi
+
+
+echo error
+#tar -czf /run/media/mads/Backup/backup${CURRENTDATE}.tar.gz /home/${USER}/Dokumente
 
 exit 0
