@@ -2,17 +2,29 @@
 
 CURRENTDATE=`date +"%d-%m-%Y"`
 
+write_lastcommand () {
+	truncate -s 0 ${1:1}
+	echo "backup ${1} ${2} ${3} ${4}" > lastcommand
+}
 archive_f () {
   tar -czf ${1} ${2}
   return
 }
-test_for_file () {
-	if [[ -f $2 ]]; then echo "file/directory found" ; 
+test_for_directory () {
+	echo ${1}
+	if [[ -d ${1} ]]; 
+	then echo "file/directory found" ; 
 	else 
 		echo "Couldnt find file/directory"
 		exit 1
 	fi
 }
+
+if [ ${1} ==  ];
+then 
+	eval $(head -n 1 lastcommand)
+	exit 0
+fi
 
 if [ ${1} == -help ];
 then
@@ -37,23 +49,24 @@ fi
 
 if [ ${1} == -dout ] || [ ${1} == -din ]; 
 then 
-	test_for_file
-	truncate -s 0 ${1}
-	echo "$2" > ${1}
+	test_for_file ${2}
+	truncate -s 0 ${1:1}
+	echo "$2" > ${1:1}
 	echo Succesfully
 	exit 0
 fi
 
 if [ ${1} == -d ];
 then
-	if [ ${2} == -di ]; then in=$(head -n 1 din); else in=${3}; fi
-	if [ ${2} == -do ]; then out=$(head -n 1 dout); else out=${2}${CURRENTDATE}; fi
+	if [ ${3} == -din ]; then in=$(head -n 1 din); else in=${3}; fi
+	if [ ${2} == -dout ]; then out="$(head -n 1 dout)/${CURRENTDATE}"; else out="${2}/${CURRENTDATE}"; fi
+	echo "${in}"
+	echo "${out}" 
 	archive_f ${out} ${in}
+	write_lastcommand ${1} ${2} ${3} 
 	exit 0
 fi
 
-
 echo error
-#tar -czf /run/media/mads/Backup/backup${CURRENTDATE}.tar.gz /home/${USER}/Dokumente
 
 exit 0
