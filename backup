@@ -69,4 +69,4 @@ fi
 
 echo error
 
-exit 0
+exit 1
