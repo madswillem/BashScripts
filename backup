@@ -4,7 +4,7 @@ CURRENTDATE=`date +"%d-%m-%Y"`
 
 write_lastcommand () {
 	truncate -s 0 ${1:1}
-	echo "backup ${1} ${2} ${3} ${4}" > lastcommand
+	echo "backup ${1} ${2} ${3} ${4}" > ~/Dokumente/BASHSCRIPTS/lastcommand
 }
 archive_f () {
   tar -czf ${1} ${2}
@@ -50,7 +50,7 @@ fi
 if [ ${1} == -dout ] || [ ${1} == -din ]; 
 then 
 	test_for_file ${2}
-	truncate -s 0 ${1:1}
+	truncate -s 0 ~/Dokumente/BASHSCRIPTS/${1:1}
 	echo "$2" > ${1:1}
 	echo Succesfully
 	exit 0
